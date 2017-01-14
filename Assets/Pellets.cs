@@ -2,47 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using Assets;
 
-public class PelletLoader : MonoBehaviour
+public class Pellets : MonoBehaviour
 {
-    public Material pelletMaterial;
+    public static Material pelletMaterial;
 
-    const float XStartPos = 12.5f;
-    const float ZStartPos = -12.5f;
-
-	// Use this for initialization
-	void Start ()
+	public static void Load()
     {
         pelletMaterial = (Material)Resources.Load("Materials\\Pickup", typeof(Material));
 
-        Debug.Log(Directory.GetCurrentDirectory());
-        var gameGridText = File.ReadAllLines("Assets\\GameGrid.txt");
+        float x = GameGrid.XDrawStartPos;
+        float z = GameGrid.ZDrawStartPos;
 
-        float x = XStartPos;
-        float z = ZStartPos;
-
-        foreach (var line in gameGridText)
+        foreach (var line in GameGrid.Text)
         {
             foreach(char cell in line)
             {
-                if(cell == '-')
+                if(cell == '-' || cell == 'I' || cell == 'L' || cell == 'R')
                 {
                     drawPellet(x, z);
                 }
                 x--;
             }
-            x = XStartPos;
-
+            x = GameGrid.XDrawStartPos;
             z++;
         }
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
-    private void drawPellet(float x, float z)
+    private static void drawPellet(float x, float z)
     {
         var pellet = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         
