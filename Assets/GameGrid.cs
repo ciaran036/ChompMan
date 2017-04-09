@@ -41,9 +41,16 @@ namespace Assets
                     switch (cell)
                     {
                         case '-':
-                            Grid[x, z] = GridPiece.Space;
+                            Grid[x, z] = GridPiece.Pellet;
+                            break;
+                        case 'P':
+                            Grid[x, z] = GridPiece.PowerPellet;
+                            break;
+                        case 'X':
+                            Grid[x, z] = GridPiece.EmptySpace;
                             break;
                         case 'I':
+                        case 'i':
                             Grid[x, z] = GridPiece.Intersection;
                             break;
                         case 'W':
@@ -86,6 +93,17 @@ namespace Assets
         public static float GetDrawPositionZ(int y)
         {
             return ZDrawStartPos + y;
+        }
+
+        /// <summary>
+        /// Is the position next to the base
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="z"></param>
+        /// <returns></returns>
+        public static bool NextToBase(int x, int z)
+        {
+            return (x == 13 || x == 14) && z == 11;
         }
 
         public static List<Movement> GetPossibleMoves(int x, int z)
@@ -146,7 +164,11 @@ namespace Assets
 
         private static bool isValidMove(int x, int z)
         {
-            return Grid[x, z] == GridPiece.Space || Grid[x, z] == GridPiece.Intersection;
+            return
+                Grid[x, z] == GridPiece.Pellet ||
+                Grid[x, z] == GridPiece.PowerPellet ||
+                Grid[x, z] == GridPiece.EmptySpace ||
+                Grid[x, z] == GridPiece.Intersection;
         }
 
         public static int Up(int z)
@@ -171,6 +193,7 @@ namespace Assets
 
         public static int TeleportLeft(int x)
         {
+            // TODO: Go to an exact location instead of teleporting from current location, otherwise this can lead to player being thrown out of the play area!
             return x - 24;
         }
 
@@ -198,12 +221,14 @@ namespace Assets
 
     public enum GridPiece
     {
-        Space = 0,
-        Intersection = 1,
-        Wall = 2,
-        LeftPortal = 3,
-        RightPortal = 4,
-        GhostHome = 5
+        Pellet = 0,
+        PowerPellet = 1,
+        EmptySpace = 2,
+        Intersection = 3,
+        Wall = 4,
+        LeftPortal = 5,
+        RightPortal = 6,
+        GhostHome = 7
     }
 
     public enum Movement

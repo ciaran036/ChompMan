@@ -7,10 +7,11 @@ using Assets;
 public class Pellets : MonoBehaviour
 {
     public static Material pelletMaterial;
+    public static int TotalNumberOfPellets;
 
 	public static void Load()
     {
-        pelletMaterial = (Material)Resources.Load("Materials\\Pickup", typeof(Material));
+        pelletMaterial = (Material)Resources.Load(Materials.Pickup, typeof(Material));
 
         float x = GameGrid.XDrawStartPos;
         float z = GameGrid.ZDrawStartPos;
@@ -19,9 +20,15 @@ public class Pellets : MonoBehaviour
         {
             foreach(char cell in line)
             {
-                if(cell == '-' || cell == 'I' || cell == 'L' || cell == 'R')
+                if(cell == '-' || cell == 'I')
                 {
+                    TotalNumberOfPellets++;
                     drawPellet(x, z);
+                }
+                else if (cell == 'P')
+                {
+                    TotalNumberOfPellets++;
+                    drawPowerPellet(x, z);
                 }
                 x--;
             }
@@ -40,8 +47,25 @@ public class Pellets : MonoBehaviour
         var renderer = pellet.GetComponent<Renderer>();
         renderer.material = pelletMaterial;
 
-        pellet.tag = "pellet";
-        pellet.name = "pellet";
-        Instantiate(pellet);
+        pellet.tag = ObjectTags.Pellet;
+        pellet.name = ObjectNames.Pellet;
+    }
+
+    private static void drawPowerPellet(float x, float z)
+    {
+        var powerPellet = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        powerPellet.transform.position = new Vector3(x, 1, z);
+        powerPellet.transform.localScale = new Vector3(1f, 1f, 1f);
+
+        var renderer = powerPellet.GetComponent<Renderer>();
+        renderer.material = pelletMaterial;
+
+        powerPellet.tag = ObjectTags.Pellet;
+        powerPellet.name = ObjectNames.PowerPellet;
+    }
+
+    public static int NumberOfPelletsRemaining()
+    {
+        return GameObject.FindGameObjectsWithTag(ObjectTags.Pellet).Length-1;
     }
 }
